@@ -1,0 +1,283 @@
+openapi: 3.0.3
+
+info:
+  title: Backend for Dynamic Website Template
+  version: 1.0.0
+
+tags:
+  - username: admins
+    description: Operations about admins
+
+paths:
+  /v1/profile:
+    get:
+      tags:
+        - admins
+      summary: Get profile
+      operationId: getProfile
+      description: Get profile regardless of role
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    delete:
+      tags:
+        - admins
+      summary: Delete profile
+      operationId: deleteProfile
+      description: Delete the profile of a admin
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    patch:
+      tags:
+        - admins
+      summary: Update profile
+      operationId: updateProfile
+      description: Update the profile of a admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    post:
+      tags:
+        - admins
+      summary: Create admin
+      operationId: createAdmin
+      description: Create a new admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdminRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAdminResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+
+  /v1/login:
+    post:
+      tags:
+        - auth
+      summary: Login
+      operationId: login
+      description: Login to the application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  
+components:
+  schemas:
+    GetProfileResponse:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        type:
+          type: string
+
+    UpdateProfileRequest:
+      type: object
+      required:
+        - username
+        - email
+        - type
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        type:
+          type: string
+
+    UpdateProfileResponse:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    CreateAdminRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    CreateAdminResponse:
+      type: object
+      required:
+        - id
+        - username
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+
+    Admin:
+      type: object
+      required:
+        - username
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        verified:
+          type: string
+          enum:
+            - true
+            - false
+        password:
+          type: string
+
+    UnauthorizedResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    InternalServerErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
